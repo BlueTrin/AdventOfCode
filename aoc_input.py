@@ -3,7 +3,7 @@ from os import path, makedirs, getenv
 from tempfile import gettempdir
 from urllib import request
 
-from adventofcode import parse_args
+import argparse
 
 # see https://github.com/wimglenn/advent-of-code-wim/issues/1
 def parse_args():
