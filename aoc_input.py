@@ -6,7 +6,21 @@ from urllib import request
 from adventofcode import parse_args
 
 # see https://github.com/wimglenn/advent-of-code-wim/issues/1
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('day', default=0, type=int, nargs='?',
+                        help='challenge calendar day, 0 solves all')
+    parser.add_argument('-p', '--part', dest='part', default=0, type=int, choices=range(3),
+                        help='solve task part 1 or 2, 0 solves both')
+    parser.add_argument('-y', '--year', dest='year', default=2022, type=int, choices=range(2015, 2022),
+                        help='solve tasks from this year')
+    parser.add_argument('-c', '--cache', dest='cache_dir',
+                        help='directory where to store challenge input strings')
+    parser.add_argument('-s', '--session', dest='session',
+                        help='adventofcode.com login session cookie')
+    return parser.parse_args()
 
+# see https://github.com/wimglenn/advent-of-code-wim/issues/1
 def get_input(day: int, year: int = 2020):
     args = parse_args()
     input_dir = args.cache_dir or path.join(gettempdir(), 'aoc_cache')
