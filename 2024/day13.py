@@ -14,7 +14,9 @@ Button A: X+69, Y+23
 Button B: X+27, Y+71
 Prize: X=18641, Y=10279'''
 
-inp = open("day13_input.txt").read()
+from aoc_input import get_input
+inp = get_input(13,2024)
+# inp = open("day13_input.txt").read()
 
 p_lst = []
 for x in inp.split("\n\n"):

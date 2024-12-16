@@ -1,3 +1,5 @@
+from os import utime
+
 from aoc_input import get_input
 from utils import aoc_timer, parse_complex
 from typing import Dict, List, Tuple, Set
@@ -38,6 +40,8 @@ NW = N + W
 NE = N + E
 SW = S + W
 SE = S + E
+
+ALLDIRS = [N, S, E, W]
 
 def print_maze(nodes, coords, anti ):
     s = ""
@@ -87,11 +91,30 @@ i1 = '''###############
 
 def part1(inp):
     total = 0
-    fDG
-    return total
+    co_to_c, c_to_co, dims = parse_complex(inp)
+    start = next(iter(c_to_co['S']))
+    end = next(iter(c_to_co['E']))
+    DG = nx.DiGraph()
+    for p in c_to_co['.'] | c_to_co['E'] | c_to_co['S']:
+        for d in ALLDIRS:
+            if p+d == end:
+                dest = end
+            else:
+                dest = (p+d, d)
+            DG.add_edge((p, d), dest, weight=1)  # don't bother checking for walls, we like to crash into them lol
+            DG.add_edge((p, d), (p, d*1j), weight=1000)
+            DG.add_edge((p, d), (p, d*-1j), weight=1000)
+
+    short_path_len = nx.shortest_path_length(DG, (start, E), end, weight="weight")
+    seen = set()
+    for path in nx.all_shortest_paths(DG, (start, E), end, weight="weight"):
+        for n in path:
+            seen.add(n if isinstance(n, complex) else n[0])
+    return short_path_len, len(seen)
 
 def part2(some_args):
     total = 0
+    # oh well I didn't need this for part 2
     return total
 
 

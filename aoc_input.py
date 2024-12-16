@@ -31,7 +31,7 @@ def get_input(day: int, year: int = 2020):
         with open(input_path, 'r') as f:
             return f.read()
 
-    session_token = "_ga=GA1.2.936012548.1702496502; _ga_MHSNPJKWC7=GS1.2.1724569495.74.0.1724569495.0.0.0; session=53616c7465645f5f234ee02a1ebb481d7dd4140babd4ba3101cecf4ba638038c751b14f000ae74da52ac5938838f674c3454ad358ab958fd5a783dd37faf0aa2"
+    session_token = "_ga=GA1.2.528419388.1734130844; _gid=GA1.2.1492105249.1734130844; session=53616c7465645f5f364a9fb40afa30c063505a11ffe9556e341a6d776e30ecc1a2238f3921af09935f04edd7398d2ec89694051f6c0b54f1d56bd48191c8862a; _gat=1; _ga_MHSNPJKWC7=GS1.2.1734130844.1.1.1734131070.0.0.0"
     #session_token = args.session or getenv('AOC_SESSION_ID')
     if not session_token:
         sys.exit("set AOC_SESSION_ID environment variable or specify -s argument")
