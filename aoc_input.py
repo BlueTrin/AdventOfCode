@@ -20,6 +20,7 @@ def parse_args():
                         help='adventofcode.com login session cookie')
     return parser.parse_args()
 
+
 # see https://github.com/wimglenn/advent-of-code-wim/issues/1
 def get_input(day: int, year: int = 2020):
     args = parse_args()
@@ -31,9 +32,9 @@ def get_input(day: int, year: int = 2020):
         with open(input_path, 'r') as f:
             return f.read()
 
-    session_token = "_ga=GA1.2.528419388.1734130844; _gid=GA1.2.1492105249.1734130844; session=53616c7465645f5f364a9fb40afa30c063505a11ffe9556e341a6d776e30ecc1a2238f3921af09935f04edd7398d2ec89694051f6c0b54f1d56bd48191c8862a; _gat=1; _ga_MHSNPJKWC7=GS1.2.1734130844.1.1.1734131070.0.0.0"
-    #session_token = args.session or getenv('AOC_SESSION_ID')
-    if not session_token:
+    import session_token
+    aoc_session_id = session_token.aoc_session_id or getenv('AOC_SESSION_ID')
+    if not aoc_session_id:
         sys.exit("set AOC_SESSION_ID environment variable or specify -s argument")
     input_url = f'https://adventofcode.com/{year}/day/{day}/input'
     input_request = request.Request(
