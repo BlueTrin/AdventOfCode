@@ -1,4 +1,6 @@
 import copy
+import colorama
+import blessings
 from doctest import debug
 
 from aoc_input import get_input
