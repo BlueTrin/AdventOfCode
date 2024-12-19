@@ -1,4 +1,4 @@
-from aoc_input import get_input
+from aoc_lube import fetch, submit
 from utils import aoc_timer, parse_complex
 from typing import Dict, List, Tuple, Set
 import math
@@ -6,6 +6,8 @@ import itertools
 import networkx as nx
 import scipy
 import numpy as np
+from collections import deque
+from heapq import heappush, heappop
 
 # GCD -> math.gcd
 
@@ -21,13 +23,7 @@ import numpy as np
 # >>> list(itertools.product([1,2,3], repeat=2))
 # [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)]
 
-#   _____ ______ _   _ ______ _____            _
-#  / ____|  ____| \ | |  ____|  __ \     /\   | |
-# | |  __| |__  |  \| | |__  | |__) |   /  \  | |
-# | | |_ |  __| | . ` |  __| |  _  /   / /\ \ | |
-# | |__| | |____| |\  | |____| | \ \  / ____ \| |____
-#  \_____|______|_| \_|______|_|  \_\/_/    \_\______|
-#
+# GENERAL DEFINITIONS # GENERAL DEFINITIONS # GENERAL DEFINITIONS # GENERAL DEFINITIONS # GENERAL DEFINITIONS # GENERAL DEFINITIONS
 
 N = -1j
 S = 1j
@@ -76,14 +72,7 @@ i1 = '''###############
 #S..#.....#...#
 ###############
 '''
- #   _____ ____  _____  ______   _    _ ______ _____  ______
- #  / ____/ __ \|  __ \|  ____| | |  | |  ____|  __ \|  ____|
- # | |   | |  | | |  | | |__    | |__| | |__  | |__) | |__
- # | |   | |  | | |  | |  __|   |  __  |  __| |  _  /|  __|
- # | |___| |__| | |__| | |____  | |  | | |____| | \ \| |____
- #  \_____\____/|_____/|______| |_|  |_|______|_|  \_\______|
- #
-
+ #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE  #  CODE HERE
 
 def part1(inp):
     total = 0
@@ -94,11 +83,12 @@ def part2(some_args):
     total = 0
     return total
 
+# RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE # RUN STUFF HERE
 
 sol1 = part1(i1)
 print(sol1)
 
-ii = get_input(16, year=2024)
+ii = fetch(2024, 16)
 sol1 = part1(ii)
 print(sol1)
 
