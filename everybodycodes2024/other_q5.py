@@ -20,7 +20,7 @@ def main():
     while True:
         # calculate the result of the current round
         result = calc_round(grid, current_row)
-        # if we have seen the result 2024 times, print it and break
+        # if we have seen the result aoc2024 times, print it and break
         if result in seen_numbers:
             seen_numbers[result] += 1
         else:

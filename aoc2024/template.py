@@ -11,6 +11,9 @@ from heapq import heappush, heappop
 import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+import keyboard
+import time
+
 # GCD -> math.gcd
 
 # all combinations (no order):

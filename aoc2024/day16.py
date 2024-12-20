@@ -1,6 +1,6 @@
 from os import utime
 
-from aoc_input import get_input
+from utils.aoc_input import get_input
 from utils import aoc_timer, parse_complex
 from typing import Dict, List, Tuple, Set
 import math

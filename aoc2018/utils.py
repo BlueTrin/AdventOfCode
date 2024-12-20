@@ -2,6 +2,41 @@ import logging
 import time
 from typing import Dict, List, Tuple, Set
 
+N = -1j
+S = 1j
+W = -1
+E = 1
+
+FOURDIRS = [N, S, E, W]
+
+NW = N + W
+NE = N + E
+SW = S + W
+SE = S + E
+
+
+def map_dst(start: complex, allowed: Set[complex]) -> Dict[complex, int]:
+    '''
+    Does a fill algo and returns a map (coord -> distance) of all allowed coords from start
+    '''
+    dst_map = {start: 0}
+    boundary = dst_map
+    has_written = True
+    curr_dst = 0
+    while has_written:
+        has_written = False
+        curr_dst += 1
+        new_boundary = {}
+        for c in boundary:
+            for d in FOURDIRS:
+                dst = c+d
+                if dst in allowed and dst not in dst_map:
+                    new_boundary[dst] = curr_dst
+                    has_written = True
+        dst_map.update(new_boundary)
+        boundary = new_boundary
+    return dst_map
+
 def aoc_timer(part=0, day=0, year=0):
     part = {1: 'one', 2: 'two'}.get(part)
     prepend = ''
@@ -82,6 +117,6 @@ def parse_complex(txt_input: str) -> Tuple[Dict[complex, str], Dict[str, Set[com
 
 # if __name__ == '__main__':
 #     from adventofcode.inputs import get_input
-#     txt_input = get_input(8, year=2024)
+#     txt_input = get_input(8, year=aoc2024)
 #     coords_to_char, char_to_coordsset, max_coords = parse_complex(txt_input)
 #     pass

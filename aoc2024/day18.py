@@ -1,12 +1,6 @@
-from aoc_input import get_input
 import aoc_lube
-from utils import aoc_timer, parse_complex
-from typing import Dict, List, Tuple, Set
-import math
 import itertools
 import networkx as nx
-import scipy
-import numpy as np
 
 # GCD -> math.gcd
 
