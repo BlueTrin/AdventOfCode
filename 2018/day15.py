@@ -7,7 +7,7 @@ import networkx as nx
 import scipy
 import numpy as np
 from dataclasses import dataclass
-from collections import deque
+from collections import deque , defaultdict
 import enum
 from heapq import heappush, heappop
 import logging
@@ -255,6 +255,40 @@ class Game:
         return res[0] if res else None
 
     def find_all_path_heapq(self, unit, min_shortest=math.inf):
+        res = []
+        entry_count = 0
+        q = []
+        target_pos = {u.pos for u in self.units if u.team != unit.team}
+        walls = {u.pos for u in self.units if u.team == unit.team}
+        seen_len = defaultdict(lambda: defaultdict(int))   # we need to store len with the first node
+        heappush(q, (
+            0,
+            entry_count,
+            unit.pos, []))
+        entry_count += 1
+        while q:
+            depth, _, pos, path = heappop(q)
+            if path and seen_len.get(path[0], {}).get(path[-1], math.inf) <= depth:
+                continue
+            if depth > min_shortest:
+                continue
+            if path:
+                seen_len[path[0]][path[-1]] = min(seen_len[path[0]][path[-1]], depth)
+            if pos in target_pos:
+                res.append(path)
+                min_shortest = min(min_shortest, depth)
+            for d in ALLDIRS:
+                if pos+d in walls:
+                    continue
+                heappush(q, (
+                    depth+1,
+                    entry_count,
+                    unit.pos+d, path+[pos+d]))
+                entry_count+=1
+        return res
+
+
+    def find_all_path_heapq_old(self, unit, min_shortest=math.inf):
         entry_count = 0
         q = []
         enemies_pos = {u.pos for u in self.units if u.team != unit.team}

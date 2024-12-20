@@ -52,7 +52,7 @@ def parse_complex(txt_input: str) -> Tuple[Dict[complex, str], Dict[str, Set[com
     ... ...
     ... .OO.
     ... """
-    >>> ex_coords_to_char, ex_char_to_coordsset, ex_max_coords = parse_complex(ex_txt_input)
+    >>> co_to_c, c_to_cos, lens = parse_complex(ex_txt_input)
 
     :param txt_input:
     :return:

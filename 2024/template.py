@@ -6,9 +6,11 @@ import itertools
 import networkx as nx
 import scipy
 import numpy as np
-from collections import deque
+from collections import deque, defaultdict
 from heapq import heappush, heappop
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 # GCD -> math.gcd
 
 # all combinations (no order):
@@ -29,6 +31,8 @@ N = -1j
 S = 1j
 W = -1
 E = 1
+
+FOURDIRS = [N, S, E, W]
 
 NW = N + W
 NE = N + E
@@ -76,7 +80,7 @@ i1 = '''###############
 
 def part1(inp):
     total = 0
-    fDG
+    # co_to_c, c_to_cos, lens = parse_complex(ex_txt_input)
     return total
 
 def part2(some_args):
