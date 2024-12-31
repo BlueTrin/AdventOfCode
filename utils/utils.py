@@ -1,6 +1,7 @@
 import logging
 import time
 from typing import Dict, List, Tuple, Set
+from collections import namedtuple
 
 N = -1j
 S = 1j
@@ -13,6 +14,14 @@ NW = N + W
 NE = N + E
 SW = S + W
 SE = S + E
+
+class Point(namedtuple('Point',['x', 'y'])):
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y )
+
+    def __sub__(self, other):
+        return Point(self.x - other.x, self.y - other.y)
+
 
 
 def map_dst(start: complex, allowed: Set[complex]) -> Dict[complex, int]:
