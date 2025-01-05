@@ -5,7 +5,7 @@ q5_inp = '''2 3 4 5
 4 5 2 3
 5 2 3 4'''
 
-from utils import parse_complex
+from utils2018 import parse_complex
 def p1(txt, part):
     res = None
     for i_y, r in enumerate([r for r in txt.splitlines() if r]):

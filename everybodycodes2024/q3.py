@@ -9,7 +9,7 @@ NW = N + W
 NE = N + E
 SW = S + W
 SE = S + E
-from utils import parse_complex
+from utils2018 import parse_complex
 
 def print_maze(levels, max_coords ):
     s = ""

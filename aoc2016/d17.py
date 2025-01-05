@@ -1,7 +1,7 @@
 from aoc_lube import fetch
 from collections import deque
 from hashlib import md5
-from utils.utils import Point
+from utils2018.utils import Point
 
 s = fetch(2016, 17)
 

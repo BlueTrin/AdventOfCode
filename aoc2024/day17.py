@@ -3,8 +3,8 @@ import colorama
 import blessings
 from doctest import debug
 
-from utils.aoc_input import get_input
-from utils import aoc_timer, parse_complex
+from utils2018.aoc_input import get_input
+from utils2018 import aoc_timer, parse_complex
 from typing import Dict, List, Tuple, Set
 import math
 import itertools

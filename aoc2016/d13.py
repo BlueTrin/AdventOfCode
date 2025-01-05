@@ -1,6 +1,6 @@
 from aoc_lube import fetch
 from functools import cache
-from utils.utils import Point
+from utils2018.utils import Point
 
 s = fetch(2016, 13)
 

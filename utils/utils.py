@@ -2,18 +2,9 @@ import logging
 import time
 from typing import Dict, List, Tuple, Set
 from collections import namedtuple
+import math
+import numpy as np
 
-N = -1j
-S = 1j
-W = -1
-E = 1
-
-FOURDIRS = [N, S, E, W]
-
-NW = N + W
-NE = N + E
-SW = S + W
-SE = S + E
 
 class Point(namedtuple('Point',['x', 'y'])):
     def __add__(self, other):
@@ -22,7 +13,35 @@ class Point(namedtuple('Point',['x', 'y'])):
     def __sub__(self, other):
         return Point(self.x - other.x, self.y - other.y)
 
+    def __mul__(self, other):
+        return Point3D(self.x * other, self.y * other)
 
+    def adjacent8(self):
+        return [self + d for d in EIGHTDIRS]
+
+N = Point(0, -1)
+S = Point(0, 1)
+W = Point(-1, 0)
+E = Point(1, 0)
+
+FOURDIRS = [N, S, E, W]
+
+NW = N + W
+NE = N + E
+SW = S + W
+SE = S + E
+
+EIGHTDIRS = [N, S, E, W, NW, NE, SW, SE]
+
+class Point3D(namedtuple('Point',['x', 'y', 'z'])):
+    def __add__(self, other):
+        return Point3D(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __sub__(self, other):
+        return Point3D(self.x - other.x, self.y - other.y, self.z - other.z)
+
+    def __mul__(self, other):
+        return Point3D(self.x * other, self.y * other, self.z * other)
 
 def map_dst(start: complex, allowed: Set[complex]) -> Dict[complex, int]:
     '''
@@ -123,6 +142,29 @@ def parse_complex(txt_input: str) -> Tuple[Dict[complex, str], Dict[str, Set[com
         len([x for x in txt_input.split("\n") if x]))
 
     return coords_to_char, char_to_coordsset, max_coords
+
+
+def rotation_x_3d(vec, degrees):
+    rad = math.radians(degrees)
+    rot = np.array([[ 1, 0 ,0],
+                     [ 0, math.cos(rad) ,-math.sin(rad)],
+                     [ 0, math.sin(rad) ,math.cos(rad)]])
+    return vec @ rot
+
+def rotation_y_3d(vec, degrees):
+    rad = math.radians(degrees)
+    rot = np.array([[ math.cos(rad), 0 ,math.sin(rad)],
+                     [ 0,  1, 0],
+                     [ -math.sin(rad), 0 ,math.cos(rad)]])
+    return vec @ rot
+
+def rotation_z_3d(vec, degrees):
+    rad = math.radians(degrees)
+    rot = np.array([[math.cos(rad) ,-math.sin(rad), 0],
+                     [ math.sin(rad) ,math.cos(rad), 0],
+                     [0, 0, 1],
+                     ])
+    return vec @ rot
 
 # if __name__ == '__main__':
 #     from adventofcode.inputs import get_input

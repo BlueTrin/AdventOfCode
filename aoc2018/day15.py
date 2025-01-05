@@ -2,7 +2,7 @@ import os
 
 import colorama
 from aoc_lube import fetch, submit
-from utils import aoc_timer, parse_complex
+from utils2018 import aoc_timer, parse_complex
 from typing import Dict, List, Tuple, Set
 import math
 import copy

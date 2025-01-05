@@ -6,7 +6,7 @@ from collections import defaultdict
 # dec x decreases the value of register x by one.
 # jnz x y jumps to an instruction y away (positive means forward; negative means backward), but only if x is not zero.
 
-s = fetch(2016, 23)
+s = fetch(2016, 25)
 
 reg = defaultdict(int)
 instptr = 0
@@ -49,29 +49,44 @@ def tgl(x):
             cmd = "jnz"
     program[instptr + reg[x]] = f"{cmd} {' '.join(args)}"
 
-# The rest of the electronics seem to place the keypad entry (the number of eggs, 7) in register a, run the code,
-# and then send the value left in register a to the safe.
-reg['a'] = 7
-while instptr < len(program):
-    inst = program[instptr]
-    cmd, *args = inst.split()
-    globals()[cmd](*args)
-    instptr += 1
+prevbit = None
+def out(x):
+    global prevbit
+    if x.isalpha():
+        v = reg[x]
+    else:
+        v = int(x)
+
+    if v not in (0, 1):
+        raise StopIteration("invlaid")
+    if prevbit is None:
+        prevbit = v
+    elif prevbit == v:
+        raise StopIteration("invlaid")
+    else:
+        prevbit = v
+#    print(v, end="")
+
+for i in range(1, 1000):
+    program = s.splitlines()
+    reg = defaultdict(int)
+    reg['a'] = i
+    instptr = 0
+    print(f"a={i}")
+    prevbit = None
+    try:
+        while instptr < len(program):
+            inst = program[instptr]
+            cmd, *args = inst.split()
+            globals()[cmd](*args)
+            instptr += 1
+    except StopIteration:
+        continue
 
 print("Part 1:", reg["a"])
 
-for a in range(6, 9):
-    program = s.splitlines()
-    reg = defaultdict(int)
-    instptr = 0
-    reg["a"] = a
-    while instptr < len(program):
-        inst = program[instptr]
-        cmd, *args = inst.split()
-        globals()[cmd](*args)
-        instptr += 1
-
-    print(f"a={a}", reg["a"])
-
-import math
-print("Part 2:", math.factorial(12) + 7452)
+# reset
+program = s.splitlines()
+reg = defaultdict(int)
+instptr = 0
+reg["a"] = 0

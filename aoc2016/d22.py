@@ -1,6 +1,6 @@
 from aoc_lube import fetch
 from itertools import permutations
-from utils.utils import Point
+from utils2018.utils import Point
 import re
 from heapq import heappop, heappush
 
