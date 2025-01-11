@@ -1,37 +1,63 @@
 # Description: Intcode computer for Advent of Code 2019
+from collections import defaultdict, deque
 
 class Arg(object):
-    def __init__(self, mode, value, p):
+    def __init__(self, mode, value, p, relative_base):
         self.mode = mode
         self.value = value
         self.p = p
+        self.relative_base = relative_base
+
 
     def __repr__(self):
         return f'{self.mode}:{self.value}'
 
     def get(self):
-        return self.p[self.value] if self.mode == 0 else self.value
+        # For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
+        if self.mode == 0:
+            return self.p[self.value]
+        elif self.mode == 1:
+            return self.value
+        elif self.mode == 2:
+            return self.p[self.value + self.relative_base]
+        else:
+            raise Exception(f'Unknown mode {self.mode}')
 
     def set(self, value):
-        if self.mode == 1:
+        if self.mode == 0:
+            self.p[self.value] = value
+        elif self.mode == 1:
             raise Exception('Immediate mode is not settable')
-        self.p[self.value] = value
+        elif self.mode == 2:
+            self.p[self.value + self.relative_base] = value
+        else:
+            raise Exception(f'Unknown mode {self.mode}')
 
 class Intcode(object):
     def __init__(self, program):
-        self.p = program
+        self.p = defaultdict(int, {i: v for i, v in enumerate(program)})
         self.ptr = 0
-        self.output = ""
+        self.output = deque()
+        self.input = []
+        self.halted = False
+        self.relative_base = 0
+        self.input_needed = False
 
-    def run(self):
-        while self.p[self.ptr] != 99:
-            instr, a, b, c = self.p[self.ptr:self.ptr + 4]
+    def add_input(self, value):
+        self.input.append(value)
+
+    def run(self, stop_at_output=False):
+        while self.p[self.ptr] != 99 and not self.halted:
+            instr, a, b, c = (self.p.get(self.ptr + i, 0) for i in range(4))
             opcode = instr % 100
             mode1 = (instr // 100) % 10
             mode2 = (instr // 1000) % 10
             mode3 = (instr // 10000) % 10
 
-            a1, a2, a3 = Arg(mode1, a, self.p), Arg(mode2, b, self.p), Arg(mode3, c, self.p)
+            a1, a2, a3 = (Arg(mode1, a, self.p, self.relative_base),
+                          Arg(mode2, b, self.p, self.relative_base),
+                          Arg(mode3, c, self.p, self.relative_base))
+
             if opcode == 1:
                 self.opcode1(a1, a2, a3)
                 self.ptr += 4
@@ -39,11 +65,17 @@ class Intcode(object):
                 self.opcode2(a1, a2, a3)
                 self.ptr += 4
             elif opcode == 3:
+                if not self.input:
+                    self.input_needed = True
+                    return
+                self.input_needed = False
                 self.opcode3(a1)
                 self.ptr += 2
             elif opcode == 4:
                 self.opcode4(a1)
                 self.ptr += 2
+                if stop_at_output:
+                    return
             elif opcode == 5:
                 self.opcode5(a1, a2)
             elif opcode == 6:
@@ -54,8 +86,12 @@ class Intcode(object):
             elif opcode == 8:
                 self.opcode8(a1, a2, a3)
                 self.ptr += 4
+            elif opcode == 9:
+                self.opcode9(a1)
+                self.ptr += 2
             else:
                 raise RuntimeError(f'Unknown opcode {opcode} at {self.ptr}')
+        self.halted = True
 
     def opcode1(self, a, b, c):
         '''
@@ -80,7 +116,10 @@ class Intcode(object):
         Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
         For example, the instruction 3,50 would take an input value and store it at address 50.
         '''
-        a.set(int(input('Input: ')))
+        if self.input:
+            a.set(self.input.pop(0))
+        else:
+            raise RuntimeError('No input')
         return self.p
 
     def opcode4(self, a):
@@ -88,8 +127,8 @@ class Intcode(object):
         Opcode 4 outputs the value of its only parameter.
         For example, the instruction 4,50 would output the value at address 50.
         '''
-        print(a.get())
-        self.output += str(a.get()) + '\n'
+#        print(a.get())
+        self.output.append(a.get())
         return self.p
 
     def opcode5(self, a, b):
@@ -128,4 +167,12 @@ class Intcode(object):
         given by the third parameter. Otherwise, it stores 0.
         '''
         c.set(1 if a.get() == b.get() else 0)
+        return self.p
+
+    def opcode9(self, a):
+        '''
+        Opcode 9 adjusts the relative base by the value of its only parameter.
+        The relative base increases (or decreases, if the value is negative) by the value of the parameter.
+        '''
+        self.relative_base += a.get()
         return self.p
