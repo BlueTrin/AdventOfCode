@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Set
 from collections import namedtuple
 import math
 import numpy as np
+import itertools
 
 
 class Point(namedtuple('Point',['x', 'y'])):
@@ -15,6 +16,9 @@ class Point(namedtuple('Point',['x', 'y'])):
 
     def __mul__(self, other):
         return Point3D(self.x * other, self.y * other)
+
+    def adjacent4(self):
+        return [self + d for d in FOURDIRS]
 
     def adjacent8(self):
         return [self + d for d in EIGHTDIRS]
@@ -171,3 +175,23 @@ def rotation_z_3d(vec, degrees):
 #     txt_input = get_input(8, year=aoc2024)
 #     coords_to_char, char_to_coordsset, max_coords = parse_complex(txt_input)
 #     pass
+
+
+# SIMPLIFY EDGES BY REMOVING ALL BLANK NODES
+def remove_blank_nodes(G):
+    remove_edge = True
+    while remove_edge:
+        remove_edge = False
+        nodes_to_remove = [(n, d) for n, d in G.nodes(data=True) if d['lbl'] == '.']
+        for n, d in nodes_to_remove:
+            neighbours = list(G.adj[n])
+            for n1, n2 in itertools.combinations(neighbours, 2):
+                # logger.debug(f"  ** Link {n1} and {n2} via {n}: {G.get_edge_data(n, n1)['weight']} + {G.get_edge_data(n, n2)['weight']}")
+                new_weight = G.get_edge_data(n, n1)['weight'] + G.get_edge_data(n, n2)['weight']
+                if not G.has_edge(n1, n2) or G.get_edge_data(n1, n2)['weight'] > new_weight:
+                    G.add_edge(n1, n2, weight=new_weight)
+            for n1 in neighbours:
+                G.remove_edge(n, n1)
+            G.remove_node(n)
+            remove_edge = True
+

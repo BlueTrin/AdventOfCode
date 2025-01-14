@@ -1,5 +1,6 @@
 # Description: Intcode computer for Advent of Code 2019
 from collections import defaultdict, deque
+import copy
 
 class Arg(object):
     def __init__(self, mode, value, p, relative_base):
@@ -36,6 +37,16 @@ class Arg(object):
 class Intcode(object):
     def __init__(self, program):
         self.p = defaultdict(int, {i: v for i, v in enumerate(program)})
+        self.orig_p = copy.deepcopy(self.p)
+        self.ptr = 0
+        self.output = deque()
+        self.input = []
+        self.halted = False
+        self.relative_base = 0
+        self.input_needed = False
+
+    def reset(self):
+        self.p = copy.deepcopy(self.orig_p)
         self.ptr = 0
         self.output = deque()
         self.input = []
