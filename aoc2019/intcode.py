@@ -44,6 +44,7 @@ class Intcode(object):
         self.halted = False
         self.relative_base = 0
         self.input_needed = False
+        self.network_mode = False
 
     def reset(self):
         self.p = copy.deepcopy(self.orig_p)
@@ -77,8 +78,11 @@ class Intcode(object):
                 self.ptr += 4
             elif opcode == 3:
                 if not self.input:
-                    self.input_needed = True
-                    return
+                    if self.network_mode:
+                        self.input.append(-1)
+                    else:
+                        self.input_needed = True
+                        return
                 self.input_needed = False
                 self.opcode3(a1)
                 self.ptr += 2

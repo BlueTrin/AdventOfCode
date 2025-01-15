@@ -34,7 +34,7 @@ def cut_n_cards(n, deck_size):
 def deal_with_increment_n(n, deck_size):
     return n, 0
 
-def get_modular_factors(instructions, deck_size, times):
+def get_modular_factors(instructions, deck_size):
     a = 1
     b = 0
     for instruction in instructions:
@@ -69,25 +69,45 @@ assert (a * 7 + b) % 10 == 1
 
 a, b = get_modular_factors('''deal with increment 7
 deal into new stack
-deal into new stack'''.splitlines(), 10, 1)
+deal into new stack'''.splitlines(), 10)
 for pos, val in enumerate([0, 3, 6, 9, 2, 5, 8, 1, 4, 7]):
     assert (a * val + b) % 10 == pos
 
 a, b = get_modular_factors('''cut 6
 deal with increment 7
-deal into new stack'''.splitlines(), 10, 1)
+deal into new stack'''.splitlines(), 10)
 for pos, val in enumerate([3, 0, 7, 4, 1, 8, 5, 2, 9, 6]):
     assert (a * val + b) % 10 == pos
 
 a, b = get_modular_factors('''deal with increment 7
 deal with increment 9
-cut -2'''.splitlines(), 10, 1)
+cut -2'''.splitlines(), 10)
 
 for pos, val in enumerate([6, 3, 0, 7, 4, 1, 8, 5, 2, 9]):
     assert (a * val + b) % 10 == pos
 pass
 # test on part 1
-a, b = get_modular_factors(s.splitlines(), 10007, 1)
+a, b = get_modular_factors(s.splitlines(), 10007)
 pos_2019 = (a * 2019 + b) % 10007
 assert pos_2019 == part1
 
+a, b = get_modular_factors(s.splitlines(), deck_size)
+
+def modular_exponentiation(a, b, n, k):
+    if k == 1:
+        return a, b
+    if k % 2 == 0:
+        return modular_exponentiation((a * a) % n, (a * b + b) % n, n, k // 2)
+    else:
+        c, d = modular_exponentiation(a, b, n, k - 1)
+        return (a * c) % n, (a * d + b) % n
+
+a, b = modular_exponentiation(a, b, deck_size, times)
+
+import math
+assert math.gcd(a, deck_size) == 1 # a and deck_size are coprime numberss so we have one modular inverse
+# a * x + b = 2020 (mod deck_size)
+# x = (2020 - b) * a^-1 (mod deck_size / a)
+print(f"Part2: {(2020 - b) * pow(a, -1, deck_size) % deck_size}")
+
+pass
