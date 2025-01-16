@@ -46,8 +46,7 @@ west
 take bowl of rice
 north
 west
-north
-# '''.splitlines():
+north'''.splitlines():
     for c in l:
         comp.add_input(ord(c))
     comp.add_input(10)
@@ -68,6 +67,8 @@ bowl of rice
 
 while not comp.halted:
     comp.run()
+    comp.trace_op7 = True
+    comp.trace_op8 = False
     while comp.output:
         print(chr(comp.output.popleft()), end='')
 
