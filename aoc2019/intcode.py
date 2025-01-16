@@ -45,8 +45,7 @@ class Intcode(object):
         self.relative_base = 0
         self.input_needed = False
         self.network_mode = False
-        self.trace_op7 = False
-        self.trace_op8 = False
+        self.watches = set()
 
     def reset(self):
         self.p = copy.deepcopy(self.orig_p)
@@ -56,6 +55,9 @@ class Intcode(object):
         self.halted = False
         self.relative_base = 0
         self.input_needed = False
+
+    def set_watch(self, addr):
+        self.watches.add(addr)
 
     def add_input(self, value):
         self.input.append(value)
@@ -175,7 +177,7 @@ class Intcode(object):
         Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position
         given by the third parameter. Otherwise, it stores 0.
         '''
-        if self.trace_op7:
+        if self.ptr in self.watches:
             print(f'opcode7: {a.get()} < {b.get()} {self.ptr}')
         c.set(1 if a.get() < b.get() else 0)
         return self.p
@@ -185,8 +187,6 @@ class Intcode(object):
         Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position
         given by the third parameter. Otherwise, it stores 0.
         '''
-        if self.trace_op8:
-            print(f'opcode8: {a.get()} == {b.get()}')
         c.set(1 if a.get() == b.get() else 0)
         return self.p
 

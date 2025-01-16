@@ -53,22 +53,37 @@ north'''.splitlines():
 
 
 '''
-mug
-ornament
-weather machine
-astrolabe
-fuel cell
-monolith
-hologram
-bowl of rice
+- bowl of rice (8192)
+- monolith (64)
+- mug (32768)
+- weather machine (1)
+- fuel cell (4)
+- astrolabe (1073741824)
+- ornament (131072)
+- hologram (2048)
+
+Correct was astrolabe + ornament + HOLOGRAM 
 '''
 
-# need ornament
+# nothing = heavier
+# monolith + weather = heavier
+
+# LIGHTER
+# - monolith
+# - weather machine
+# - astrolabe
+# - ornament
+# - hologram
+
+# HEAVIER
+# - weather machine
+# - astrolabe
+# - ornament
+# - hologram
 
 while not comp.halted:
     comp.run()
-    comp.trace_op7 = True
-    comp.trace_op8 = False
+    comp.set_watch(2772)
     while comp.output:
         print(chr(comp.output.popleft()), end='')
 
