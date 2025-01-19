@@ -5,6 +5,7 @@ from collections import namedtuple
 import math
 import numpy as np
 import itertools
+import numbers
 
 
 class Point(namedtuple('Point',['x', 'y'])):
@@ -17,11 +18,20 @@ class Point(namedtuple('Point',['x', 'y'])):
     def __mul__(self, other):
         return Point3D(self.x * other, self.y * other)
 
+    def manhattan(self, other):
+        return abs(self.x - other.x) + abs(self.y - other.y)
+
     def adjacent4(self):
         return [self + d for d in FOURDIRS]
 
     def adjacent8(self):
         return [self + d for d in EIGHTDIRS]
+
+    def rotate(self, degrees):
+        rad = math.radians(degrees)
+        x = self.x * math.cos(rad) - self.y * math.sin(rad)
+        y = self.x * math.sin(rad) + self.y * math.cos(rad)
+        return Point(round(x), round(y))
 
 N = Point(0, -1)
 S = Point(0, 1)
@@ -46,6 +56,16 @@ class Point3D(namedtuple('Point',['x', 'y', 'z'])):
 
     def __mul__(self, other):
         return Point3D(self.x * other, self.y * other, self.z * other)
+
+    def __truediv__(self, other):
+        if isinstance(other, numbers.Number):
+            return Point3D(self.x / other, self.y / other, self.z / other)
+        else:
+            raise NotImplementedError()
+
+    def manhattan(self, other):
+        return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
+
 
 def map_dst(start: complex, allowed: Set[complex]) -> Dict[complex, int]:
     '''
@@ -195,3 +215,11 @@ def remove_blank_nodes(G):
             G.remove_node(n)
             remove_edge = True
 
+
+def primes(n):
+    """ Returns  a list of primes < n """
+    sieve = [True] * n
+    for i in range(3,int(n**0.5)+1,2):
+        if sieve[i]:
+            sieve[i*i::2*i]=[False]*((n-i*i-1)//(2*i)+1)
+    return [2] + [i for i in range(3,n,2) if sieve[i]]
