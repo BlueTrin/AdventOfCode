@@ -25,9 +25,8 @@ while d:
     bridge, port = d.pop()
     added_bridge = False
     for p in dparts[port] - bridge:
-        if port in p:
-            d.append((bridge | {p}, p[0] if p[1] == port else p[1]))
-            added_bridge = True
+        d.append((bridge | {p}, p[0] if p[1] == port else p[1]))
+        added_bridge = True
 
     if not added_bridge:
         strength = sum(sum(p) for p in bridge)
