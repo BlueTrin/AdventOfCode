@@ -16,7 +16,7 @@ class Point(namedtuple('Point',['x', 'y'])):
         return Point(self.x - other.x, self.y - other.y)
 
     def __mul__(self, other):
-        return Point3D(self.x * other, self.y * other)
+        return Point(self.x * other, self.y * other)
 
     def manhattan(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y)
