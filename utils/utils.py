@@ -47,6 +47,7 @@ SE = S + E
 
 EIGHTDIRS = [N, S, E, W, NW, NE, SW, SE]
 
+
 class Point3D(namedtuple('Point',['x', 'y', 'z'])):
     def __add__(self, other):
         return Point3D(self.x + other.x, self.y + other.y, self.z + other.z)
@@ -65,6 +66,17 @@ class Point3D(namedtuple('Point',['x', 'y', 'z'])):
 
     def manhattan(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
+
+    def adjacent6(self):
+        return [self + d for d in DIR3D_6]
+
+    def adjacent26(self):
+        return [self + d for d in DIR3D_26]
+
+DIR3D_6 = [Point3D(0, 0, 1), Point3D(0, 0, -1), Point3D(0, 1, 0), Point3D(0, -1, 0), Point3D(1, 0, 0), Point3D(-1, 0, 0)]
+
+DIR3D_26 = [Point3D(x, y, z) for x in range(-1, 2) for y in range(-1, 2) for z in range(-1, 2) if (x, y, z) != (0, 0, 0)]
+
 
 
 def map_dst(start: complex, allowed: Set[complex]) -> Dict[complex, int]:
@@ -173,14 +185,14 @@ def rotation_x_3d(vec, degrees):
     rot = np.array([[ 1, 0 ,0],
                      [ 0, math.cos(rad) ,-math.sin(rad)],
                      [ 0, math.sin(rad) ,math.cos(rad)]])
-    return vec @ rot
+    return Point3D(*(round(c) for c in vec @ rot))
 
 def rotation_y_3d(vec, degrees):
     rad = math.radians(degrees)
     rot = np.array([[ math.cos(rad), 0 ,math.sin(rad)],
                      [ 0,  1, 0],
                      [ -math.sin(rad), 0 ,math.cos(rad)]])
-    return vec @ rot
+    return Point3D(*(round(c) for c in vec @ rot))
 
 def rotation_z_3d(vec, degrees):
     rad = math.radians(degrees)
@@ -188,7 +200,7 @@ def rotation_z_3d(vec, degrees):
                      [ math.sin(rad) ,math.cos(rad), 0],
                      [0, 0, 1],
                      ])
-    return vec @ rot
+    return Point3D(*(round(c) for c in vec @ rot))
 
 # if __name__ == '__main__':
 #     from adventofcode.inputs import get_input
