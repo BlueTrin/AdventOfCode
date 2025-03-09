@@ -2,6 +2,8 @@ from aoc_lube import fetch
 from typing import Tuple
 import itertools
 import logging
+import re, collections
+import time
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -54,30 +56,39 @@ def part2(s, debug=False):
     else:
         logger.setLevel(logging.INFO)
 
-    cube_lst = []
-    idx_xmin = []
-    idx_xmax = []
-    idx_ymin = []
-    idx_ymax = []
-    idx_zmin = []
-    idx_zmax = []
+    cube_map = collections.Counter()
+    for line in s.splitlines():
+        # new cube sign
+        n_sgn = 1 if line.split()[0] == "on" else -1
+        n_xl, n_xh, n_yl, n_yh, n_zl, n_zh = map(int, re.findall("-?\d+", line))
 
-    for row in s.splitlines():
-        onoff, coords_s = row.split()
-        bound = tuple(tuple(map(int, it_s[2:].split(".."))) for it_s in  coords_s.split(','))
-        for cube in cube_lst:
-            cubes_toadd_lst = intersect_cube(bound, cube)
-            for cube_toadd in cubes_toadd_lst:
-                cube_lst.append(cube_toadd)
-                idx = len(cube_lst) - 1
-                idx_xmin.append((cube_toadd[0][0], idx))
-                idx_xmax.append((cube_toadd[0][1], idx))
-                idx_ymin.append((cube_toadd[1][0], idx))
-                idx_ymax.append((cube_toadd[1][1], idx))
-                idx_zmin.append((cube_toadd[2][0], idx))
-                idx_zmax.append((cube_toadd[2][1], idx))
+        cubemap_chgs = collections.Counter()
+        for (it_xl, it_xh, it_yl, it_yh, it_zl, it_zh), it_sgn in cube_map.items():
+            # for each preceding curbe we mark the intersection in negative
+            i_xl = max(n_xl, it_xl)
+            i_xh = min(n_xh, it_xh)
+            i_yl = max(n_yl, it_yl)
+            i_yh = min(n_yh, it_yh)
+            i_zl = max(n_zl, it_zl)
+            i_zh = min(n_zh, it_zh)
+            if i_xl <= i_xh and i_yl <= i_yh and i_zl <= i_zh:
+                # if it_sgn =1 and n_sgn = 1 then we have a double on, need to count the intersection off one time
+                # if it_sgn = -1 and n_sgn = -1 then we have a double off, need to remove the intersection one time
+                # if it_sgn = 1 and n_sgn = -1 then we need to turn it off, need to remove the intersection one time
+                # if it_sgn = -1 and n_sgn = 1 then we need to turn it on, need to REMOVE the intersection one time
+                cubemap_chgs[(i_xl, i_xh, i_yl, i_yh, i_zl, i_zh)] -= it_sgn
+        if n_sgn > 0:
+            # when it is ON, we add the surface (OFF/negatives do not count, except for the intersections)
+            cubemap_chgs[(n_xl, n_xh, n_yl, n_yh, n_zl, n_zh)] += n_sgn
 
-        pass
+        cube_map.update(cubemap_chgs)
+
+        # remove the 0 entries
+        cube_map = collections.Counter({k: v for k, v in cube_map.items() if v != 0})
+
+    # sum all surfaces
+    return sum((x1 - xl + 1) * (yh - yl + 1) * (zh - zl + 1) * sgn
+              for (xl, x1, yl, yh, zl, zh), sgn in cube_map.items())
 
 
 print(part2('''on x=-5..47,y=-31..22,z=-19..33
@@ -140,3 +151,8 @@ off x=-27365..46395,y=31009..98017,z=15428..76570
 off x=-70369..-16548,y=22648..78696,z=-1892..86821
 on x=-53470..21291,y=-120233..-33476,z=-44150..38147
 off x=-93533..-4276,y=-16170..68771,z=-104985..-24507''', debug=True))
+
+start = time.perf_counter()
+print(part2(s))
+end = time.perf_counter()
+print(end - start)
