@@ -144,6 +144,41 @@ def parse_space_separated(txt_input_str):
             res[i_x].append(int(c))
     return res
 
+def parse_point(txt_input: str)-> Tuple[Dict[Point, str], Dict[str, Set[Point]], Tuple[int, int]]:
+    '''
+    Read input into Point coordinates
+    >>> ex_txt_input = """.X.X
+    ... ...
+    ... .OO.
+    ... """
+    >>> co_to_c, c_to_cos, lens = parse_point(ex_txt_input)
+
+    :param txt_input:
+    :return:
+     (coords_to_char, char_to_coordsset, max_coords):
+      -
+    '''
+
+    coords_to_char = {}
+    char_to_coordsset = {}
+
+    for i_y, r in enumerate(txt_input.split("\n")):
+        if r:
+            for i_x, c in enumerate(r):
+                pt = Point(i_x, i_y)
+
+                coords_to_char[pt] = c
+
+                if c not in char_to_coordsset:
+                    char_to_coordsset[c] = set()
+                char_to_coordsset[c].add(pt)
+
+    max_coords = (
+        len(txt_input.split("\n")[0]),
+        len([x for x in txt_input.split("\n") if x]))
+
+    return coords_to_char, char_to_coordsset, max_coords
+
 def parse_complex(txt_input: str) -> Tuple[Dict[complex, str], Dict[str, Set[complex]], Tuple[int, int]]:
     '''
     Read input into complex coordinates
