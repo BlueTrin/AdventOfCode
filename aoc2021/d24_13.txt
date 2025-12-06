@@ -1,0 +1,25 @@
+inp w
+
+mul x 0
+add x z
+mod x 26        x = z mod 26
+
+div z 26        z = z div 26
+
+add x -12       x -= 12
+
+eql x w         x  = 0 if x == w else 1
+eql x 0
+
+mul y 0
+add y 25        y = 25 * x + 1
+mul y x
+add y 1
+
+mul z y         z *= y
+
+mul y 0
+add y w         y = (w + 2) * x
+add y 2
+mul y x
+add z y
