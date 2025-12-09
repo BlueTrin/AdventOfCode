@@ -124,8 +124,27 @@ logging.info(f"Finding part2 largest area")
 part2 = 0
 for i, (x, y) in enumerate(pts):
     logging.info(f" Checking pt {i+1}/{len(pts)}: {pts[i]}")
+
+    # let's determine min_ix, max_ix, min_iy, max_iy for this point
+    for min_ix in range(x, min_x, -1):
+        if (min_ix-1, y) in perimeter:
+            break
+    for max_ix in range(x, max_x+1):
+        if (max_ix+1, y) in perimeter:
+            break
+    for min_iy in range(y, min_y, -1):
+        if (x, min_iy-1) in perimeter:
+            break
+    for max_iy in range(y, max_y+1):
+        if (x, max_iy+1) in perimeter:
+            break
     for j in range(i+1, len(pts)):
         x2, y2 = pts[j]
+
+        if not (min_ix <= x2 <= max_ix):
+            continue
+        if not (min_iy <= y2 <= max_iy):
+            continue
 
         area = (abs(x2 - x)+1) * (abs(y2 - y)+1)
         if area <= part2:
