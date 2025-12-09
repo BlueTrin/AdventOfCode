@@ -270,3 +270,56 @@ def primes(n):
         if sieve[i]:
             sieve[i*i::2*i]=[False]*((n-i*i-1)//(2*i)+1)
     return [2] + [i for i in range(3,n,2) if sieve[i]]
+
+def neighbours(pt: Tuple[int, int], dirs = EIGHTDIRS):
+    '''
+    get neighbouring points of pt
+    '''
+    x, y = pt
+    for dx, dy in dirs:
+        yield (x+dx, y+dy)
+
+def is_neighbour(pt1: Tuple[int, int], grid: Set[Tuple[int, int]], dirs = EIGHTDIRS):
+    '''
+    Look if pt1 is neighbouring any pt in grid
+    '''
+    for npt in neighbours(pt1, dirs=dirs):
+        if npt in grid:
+            return True
+    return False
+
+def outside_perimeter(
+        walls: set[Tuple[int, int]],
+):
+    '''
+    Use a flood algo to find the external perimeter of walls
+    start by using a point outside the walls
+    '''
+    from collections import deque
+    perimeter = set()
+
+    min_x = min(pt[0] for pt in walls)
+    max_x = max(pt[0] for pt in walls)
+    min_y = min(pt[1] for pt in walls)
+    max_y = max(pt[1] for pt in walls)
+
+    for x in range(min_x-1, max_x+2):
+        if (x+1, min_y) in walls:
+            start_pt = (x, min_y-1)
+
+    d = deque([start_pt])
+    perimeter.add(start_pt)
+    while d:
+        pt = d.pop()
+        for npt in neighbours(pt, dirs=FOURDIRS):
+            if npt in walls:
+                continue
+            if npt in perimeter:
+                continue
+            if not (min_x-1 <= npt[0] <= max_x+1 and min_y-1 <= npt[1] <= max_y+1):
+                continue
+            if is_neighbour(npt, walls, dirs=EIGHTDIRS):
+                perimeter.add(npt)
+                d.append(npt)
+
+    return perimeter
